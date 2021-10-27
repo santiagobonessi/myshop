@@ -75,12 +75,26 @@ class Products with ChangeNotifier {
     }
   }
 
-  void updateProduct(String id, Product newProduct) {
-    final prodIndex = _items.indexWhere((product) => product.id == id);
-    if (prodIndex >= 0) {
-      _items[prodIndex] = newProduct;
-      notifyListeners();
-    }
+  Future<void> updateProduct(String id, Product newProduct) async {
+    try {
+      final prodIndex = _items.indexWhere((product) => product.id == id);
+      if (prodIndex >= 0) {
+        final url =
+            Uri.parse('https://my-shop-app-da536-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json');
+        await http.patch(
+          url,
+          body: json.encode({
+            'title': newProduct.title,
+            'description': newProduct.description,
+            'imageUrl': newProduct.imageUrl,
+            'price': newProduct.price,
+            'isFavorite': newProduct.isFavorite,
+          }),
+        );
+        _items[prodIndex] = newProduct;
+        notifyListeners();
+      }
+    } catch (error) {}
   }
 
   void deleteProduct(String id) {
