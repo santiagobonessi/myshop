@@ -95,7 +95,10 @@ class Products with ChangeNotifier {
         _items[prodIndex] = newProduct;
         notifyListeners();
       }
-    } catch (error) {}
+    } catch (error) {
+      print(error);
+      throw error;
+    }
   }
 
   Future<void> deleteProduct(String id) async {
