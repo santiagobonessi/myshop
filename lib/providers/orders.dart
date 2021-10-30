@@ -32,6 +32,9 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> fetchAndSetOrders() async {
+    if (userId == null) {
+      return;
+    }
     final url = Uri.parse(
         'https://my-shop-app-da536-default-rtdb.asia-southeast1.firebasedatabase.app/orders/$userId.json?auth=$authToken');
     try {

@@ -27,6 +27,9 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    if (userId == null) {
+      return;
+    }
     final filterUserPath = filterByUser ? 'orderBy="createdBy"&equalTo="$userId"' : '';
     var url = Uri.parse(
         'https://my-shop-app-da536-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken&$filterUserPath');
