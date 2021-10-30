@@ -8,8 +8,9 @@ import '../models/http_exception.dart';
 
 class Products with ChangeNotifier {
   final String authToken;
+  final String userId;
 
-  Products(this.authToken, this._items);
+  Products(this.authToken, this.userId, this._items);
 
   List<Product> _items = [];
 
@@ -26,7 +27,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> fetchAndSetProducts() async {
-    final url = Uri.parse(
+    var url = Uri.parse(
         'https://my-shop-app-da536-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken');
     try {
       final response = await http.get(url);
@@ -34,6 +35,11 @@ class Products with ChangeNotifier {
       if (mappedData == null) {
         return;
       }
+      url = Uri.parse(
+          'https://my-shop-app-da536-default-rtdb.asia-southeast1.firebasedatabase.app/userFavorites/$userId.json?auth=$authToken');
+      final favoriteResponse = await http.get(url);
+      final favoriteData = json.decode(favoriteResponse.body);
+
       final List<Product> loadedProducts = [];
       mappedData.forEach((productId, productData) {
         loadedProducts.add(
@@ -43,7 +49,7 @@ class Products with ChangeNotifier {
             description: productData['description'],
             price: productData['price'],
             imageUrl: productData['imageUrl'],
-            isFavorite: productData['isFavorite'],
+            isFavorite: favoriteData == null ? false : favoriteData[productId] ?? false,
           ),
         );
       });
@@ -65,9 +71,8 @@ class Products with ChangeNotifier {
         body: json.encode({
           'title': product.title,
           'description': product.description,
-          'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavorite': product.isFavorite,
+          'imageUrl': product.imageUrl,
         }),
       );
       final newProduct = Product(
@@ -98,7 +103,6 @@ class Products with ChangeNotifier {
             'description': newProduct.description,
             'imageUrl': newProduct.imageUrl,
             'price': newProduct.price,
-            'isFavorite': newProduct.isFavorite,
           }),
         );
         _items[prodIndex] = newProduct;
