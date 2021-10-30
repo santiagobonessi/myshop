@@ -29,7 +29,10 @@ class MyApp extends StatelessWidget {
             auth.userId,
             previousProducts.items == null ? [] : previousProducts.items,
           ),
-          create: (context) => Products('', '', []),
+          create: (context) => Products(null, null, []),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => Cart(),
         ),
         ChangeNotifierProxyProvider<Auth, Orders>(
           update: (context, auth, previousOrders) => Orders(
@@ -37,10 +40,7 @@ class MyApp extends StatelessWidget {
             auth.userId,
             previousOrders.orders == null ? [] : previousOrders.orders,
           ),
-          create: (context) => Orders('', '', []),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => Cart(),
+          create: (context) => Orders(null, null, []),
         ),
       ],
       child: Consumer<Auth>(
@@ -54,6 +54,7 @@ class MyApp extends StatelessWidget {
           ),
           home: authData.isAuth ? ProductsOverviewScreen() : AuthScreen(),
           routes: {
+            AuthScreen.routeName: (context) => AuthScreen(),
             ProductDetailScreen.routeName: (context) => ProductDetailScreen(),
             CartScreen.routeName: (context) => CartScreen(),
             OrdersScreen.routeName: (context) => OrdersScreen(),
