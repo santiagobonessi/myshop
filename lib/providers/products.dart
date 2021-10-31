@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import './product.dart';
+import '../config/env.dart';
 import '../models/http_exception.dart';
 
 class Products with ChangeNotifier {
@@ -31,16 +32,14 @@ class Products with ChangeNotifier {
       return;
     }
     final filterUserPath = filterByUser ? 'orderBy="createdBy"&equalTo="$userId"' : '';
-    var url = Uri.parse(
-        'https://my-shop-app-da536-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken&$filterUserPath');
+    var url = Uri.parse('${Env.basicUrl}/products.json?auth=$authToken&$filterUserPath');
     try {
       final response = await http.get(url);
       final mappedData = json.decode(response.body) as Map<String, dynamic>;
       if (mappedData == null) {
         return;
       }
-      url = Uri.parse(
-          'https://my-shop-app-da536-default-rtdb.asia-southeast1.firebasedatabase.app/userFavorites/$userId.json?auth=$authToken');
+      url = Uri.parse('${Env.basicUrl}/userFavorites/$userId.json?auth=$authToken');
       final favoriteResponse = await http.get(url);
       final favoriteData = json.decode(favoriteResponse.body);
 
@@ -67,8 +66,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> addProduct(Product product) async {
-    final url = Uri.parse(
-        'https://my-shop-app-da536-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken');
+    final url = Uri.parse('${Env.basicUrl}/products.json?auth=$authToken');
     try {
       final response = await http.post(
         url,
@@ -99,8 +97,7 @@ class Products with ChangeNotifier {
     try {
       final prodIndex = _items.indexWhere((product) => product.id == id);
       if (prodIndex >= 0) {
-        final url = Uri.parse(
-            'https://my-shop-app-da536-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$authToken');
+        final url = Uri.parse('${Env.basicUrl}/products/$id.json?auth=$authToken');
         await http.patch(
           url,
           body: json.encode({
@@ -120,8 +117,7 @@ class Products with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = Uri.parse(
-        'https://my-shop-app-da536-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$authToken');
+    final url = Uri.parse('${Env.basicUrl}/products/$id.json?auth=$authToken');
     final existingProductIndex = _items.indexWhere((product) => product.id == id);
     var existingProduct = _items.elementAt(existingProductIndex);
     _items.removeAt(existingProductIndex);

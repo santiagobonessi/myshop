@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import './cart.dart';
+import '../config/env.dart';
 
 class OrderItem {
   final String id;
@@ -35,8 +36,7 @@ class Orders with ChangeNotifier {
     if (userId == null) {
       return;
     }
-    final url = Uri.parse(
-        'https://my-shop-app-da536-default-rtdb.asia-southeast1.firebasedatabase.app/orders/$userId.json?auth=$authToken');
+    final url = Uri.parse('${Env.basicUrl}/orders/$userId.json?auth=$authToken');
     try {
       final response = await http.get(url);
       final mappedData = json.decode(response.body) as Map<String, dynamic>;
@@ -70,8 +70,7 @@ class Orders with ChangeNotifier {
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
-    final url = Uri.parse(
-        'https://my-shop-app-da536-default-rtdb.asia-southeast1.firebasedatabase.app/orders/$userId.json?auth=$authToken');
+    final url = Uri.parse('${Env.basicUrl}/orders/$userId.json?auth=$authToken');
     try {
       final currentDate = DateTime.now();
       final response = await http.post(
